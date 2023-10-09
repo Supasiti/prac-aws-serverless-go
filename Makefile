@@ -1,11 +1,11 @@
 HANDLERS = "get_user" 
 
 .PHONY: deploy
-deploy:
+deploy: tidy
 	cdk deploy
 
 .PHONY: build
-build: clean
+build: tidy clean
 	for handler in $(HANDLERS) ; do \
 		go build -o "./app/handler/$${handler}" "./cmd/handler/$${handler}.go" ; \
 	done
@@ -13,14 +13,6 @@ build: clean
 .PHONY: tidy
 tidy:
 	go mod tidy
-
-.PHONY: run-user
-run-user: build dep
-	./app/user_dao
-
-.PHONY: dep
-dep:
-	docker-compose up -d
 
 .PHONY: clean
 clean:
