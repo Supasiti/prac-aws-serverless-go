@@ -5,6 +5,8 @@ import (
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/jsii-runtime-go"
+
+	"github.com/supasiti/prac-aws-serverless-go/cdk/stack"
 )
 
 var (
@@ -21,7 +23,7 @@ func main() {
 	app := awscdk.NewApp(nil)
 	fnDescription := fmt.Sprintf("%s function stack", rootId)
 
-	NewFunctionStack(app, fnStackId, &FunctionStackProps{
+	stack.NewFunctionStack(app, fnStackId, &stack.FunctionStackProps{
 		StackProps: awscdk.StackProps{
 			Description: &fnDescription,
 		},

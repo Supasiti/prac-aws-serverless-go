@@ -1,5 +1,5 @@
 {
-  "app": "go mod tidy && go run cdk/main.go cdk/function_stack.go",
+  "app": "go mod tidy && go run cdk/main.go",
   "watch": {
     "include": [
       "**"
