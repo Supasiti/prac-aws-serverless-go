@@ -53,10 +53,13 @@ func newGetUserApi(scope constructs.Construct, props *GetUserApiProps) {
 	lambda := awslambda.NewGoFunction(scope, jsii.String(fnId), &awslambda.GoFunctionProps{
 		Entry:        jsii.String("cmd/handler/get_user"),
 		FunctionName: jsii.String(fnId),
+
+		// passing build flag to reduce bundle size
 		Bundling: &awslambda.BundlingOptions{
-			Environment: &map[string]*string{
-				"HELLO": jsii.String("WORLD"),
-			},
+			GoBuildFlags: jsii.Strings(`-ldflags "-s -w"`),
+		},
+		Environment: &map[string]*string{
+			"HELLO": jsii.String("WORLD"),
 		},
 	})
 

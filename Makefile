@@ -1,7 +1,5 @@
 HANDLERS = "get_user" 
 
-
-
 .PHONY: deploy
 deploy:
 	cdk deploy
