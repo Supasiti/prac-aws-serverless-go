@@ -15,7 +15,7 @@ var (
 //go:generate go run github.com/vektra/mockery/v2@v2.20.0 --with-expecter=true --name DbClient
 
 type DbClient interface {
-	GetItem(ctx context.Context, params *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error)
+	GetItem(ctx context.Context, params *dynamodb.GetItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.GetItemOutput, error)
 }
 
 type DbClientOption = func(*aws.Config)
@@ -64,6 +64,15 @@ func WithRetryMode(mode aws.RetryMode) DbClientOption {
 
 func WithConfig(dbConfig aws.Config) DbClientOption {
 	return func(c *aws.Config) {
-		c = &dbConfig
+		c.Region = dbConfig.Region
+		c.DefaultsMode = dbConfig.DefaultsMode
+		c.RuntimeEnvironment = dbConfig.RuntimeEnvironment
+		c.HTTPClient = dbConfig.HTTPClient
+		c.Credentials = dbConfig.Credentials
+		c.APIOptions = dbConfig.APIOptions
+		c.Logger = dbConfig.Logger
+		c.ClientLogMode = dbConfig.ClientLogMode
+		c.AppID = dbConfig.AppID
+
 	}
 }

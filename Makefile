@@ -7,7 +7,7 @@ deploy: tidy
 .PHONY: build
 build: tidy clean
 	for handler in $(HANDLERS) ; do \
-		go build -o "./app/handler/$${handler}" "./cmd/handler/$${handler}.go" ; \
+		go build -o "./app/handler/$${handler}" "./cmd/handler/$${handler}/main.go" ; \
 	done
 
 .PHONY: tidy
@@ -17,4 +17,12 @@ tidy:
 .PHONY: clean
 clean:
 	rm -rf app/*
+
+.PHONY: test
+test: 
+	go test -short -race -gcflags=all=-l ./...
+
+.PHONY: generate
+generate: build
+	go generate ./...
 
