@@ -20,7 +20,7 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 		store func(t *testing.T) store.Store
 	}
 	type args struct {
-		req events.APIGatewayProxyRequest
+		pathParams map[string]string
 	}
 	tests := []struct {
 		name   string
@@ -33,17 +33,14 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 			fields: fields{
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
-					m.EXPECT().
-						GetUser(mock.Anything, 1).
+					m.EXPECT().GetUser(mock.Anything, 1).
 						Return(stub.GetUser(), nil).Times(1)
 					return m
 				},
 			},
 			args: args{
-				req: events.APIGatewayProxyRequest{
-					PathParameters: map[string]string{
-						"userID": "1",
-					},
+				pathParams: map[string]string{
+					"userID": "1",
 				},
 			},
 			want: api.NewSuccessResponse(stub.GetUser()),
@@ -57,9 +54,7 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 				},
 			},
 			args: args{
-				req: events.APIGatewayProxyRequest{
-					PathParameters: map[string]string{},
-				},
+				pathParams: map[string]string{},
 			},
 			want: api.NewValidationError(ErrMissingUserID),
 		},
@@ -72,10 +67,8 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 				},
 			},
 			args: args{
-				req: events.APIGatewayProxyRequest{
-					PathParameters: map[string]string{
-						"userID": "invalid id",
-					},
+				pathParams: map[string]string{
+					"userID": "invalid id",
 				},
 			},
 			want: api.NewValidationError(ErrIncorrectType),
@@ -85,18 +78,14 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 			fields: fields{
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
-					m.EXPECT().
-						GetUser(mock.Anything, 1).
-						Return(nil, user.ErrUserNotFound).
-						Times(1)
+					m.EXPECT().GetUser(mock.Anything, 1).
+						Return(nil, user.ErrUserNotFound).Times(1)
 					return m
 				},
 			},
 			args: args{
-				req: events.APIGatewayProxyRequest{
-					PathParameters: map[string]string{
-						"userID": "1",
-					},
+				pathParams: map[string]string{
+					"userID": "1",
 				},
 			},
 			want: api.NewDataNotFoundError(user.ErrUserNotFound),
@@ -106,18 +95,14 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 			fields: fields{
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
-					m.EXPECT().
-						GetUser(mock.Anything, 1).
-						Return(nil, errors.New("some error")).
-						Times(1)
+					m.EXPECT().GetUser(mock.Anything, 1).
+						Return(nil, errors.New("some error")).Times(1)
 					return m
 				},
 			},
 			args: args{
-				req: events.APIGatewayProxyRequest{
-					PathParameters: map[string]string{
-						"userID": "1",
-					},
+				pathParams: map[string]string{
+					"userID": "1",
 				},
 			},
 			want: api.NewGeneralError(),
@@ -128,7 +113,11 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 			h := &getUserHandler{
 				store: tt.fields.store(t),
 			}
-			got := h.GetUser(context.Background(), tt.args.req)
+			req := events.APIGatewayProxyRequest{
+				PathParameters: tt.args.pathParams,
+			}
+
+			got := h.GetUser(context.Background(), req)
 
 			assert.Equalf(t, tt.want, got, "getUserHandler.GetUser() = %v, want %v", got, tt.want)
 
