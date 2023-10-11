@@ -12,6 +12,11 @@ import (
 	"github.com/supasiti/prac-aws-serverless-go/pkg/api"
 )
 
+var (
+	ErrMissingUserID = errors.New("missing userID")
+	ErrIncorrectType = errors.New("userID must be an integer")
+)
+
 type GetUserHandler interface {
 	GetUser(context.Context, events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse
 }
@@ -40,7 +45,7 @@ func (h *getUserHandler) GetUser(ctx context.Context, req events.APIGatewayProxy
 		if errors.Is(err, user.ErrUserNotFound) {
 			return api.NewDataNotFoundError(err)
 		}
-		return api.NewGeneralError(err)
+		return api.NewGeneralError()
 	}
 
 	return api.NewSuccessResponse(result)
@@ -49,12 +54,12 @@ func (h *getUserHandler) GetUser(ctx context.Context, req events.APIGatewayProxy
 func validateRequest(req events.APIGatewayProxyRequest) (int, error) {
 	param := req.PathParameters["userID"]
 	if len(param) == 0 {
-		return 0, errors.New("missing userID")
+		return 0, ErrMissingUserID
 	}
 
 	userID, err := strconv.Atoi(param)
 	if err != nil {
-		return 0, errors.New("userID must be an integer")
+		return 0, ErrIncorrectType
 	}
 
 	return userID, nil

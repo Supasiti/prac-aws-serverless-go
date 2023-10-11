@@ -47,7 +47,7 @@ func (s *store) GetUser(ctx context.Context, userID int) (*user.User, error) {
 
 	data, err := s.client.GetItem(ctx, cmd)
 	if err != nil {
-		log.Printf("store.GetUser client.GetItem error: %v", err)
+		log.Printf("store.GetUser client.GetItem error: %+v", err)
 		return nil, err
 	}
 

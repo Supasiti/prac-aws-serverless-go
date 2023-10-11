@@ -1,9 +1,14 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
+)
+
+var (
+	ErrGeneralServer = errors.New("internal server error")
 )
 
 type ErrorBody struct {
@@ -19,8 +24,8 @@ func NewErrorResponse(err error) *apiResponseBuilder {
 	return builder
 }
 
-func NewGeneralError(err error) *events.APIGatewayProxyResponse {
-	return NewErrorResponse(err).Build()
+func NewGeneralError() *events.APIGatewayProxyResponse {
+	return NewErrorResponse(ErrGeneralServer).Build()
 }
 
 func NewDataNotFoundError(err error) *events.APIGatewayProxyResponse {
