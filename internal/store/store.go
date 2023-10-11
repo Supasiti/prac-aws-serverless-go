@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 
 	dbclient "github.com/supasiti/prac-aws-serverless-go/internal/dynamodb"
+	"github.com/supasiti/prac-aws-serverless-go/internal/pkg/json"
 	"github.com/supasiti/prac-aws-serverless-go/internal/store/user"
 )
 
@@ -40,15 +41,15 @@ func (s *store) GetUser(ctx context.Context, userID int) (*user.User, error) {
 		TableName: aws.String(s.tableName),
 		Key:       key,
 	}
-	log.Printf("store.GetUser command: %+v", cmd)
+	log.Printf("store.GetUser command: %s", json.ToInlineJSON(cmd))
 
 	data, err := s.client.GetItem(ctx, cmd)
 	if err != nil {
-		log.Printf("store.GetUser client.GetItem error: %+v", err)
+		log.Printf("store.GetUser client.GetItem error: %s", json.ToInlineJSON(err))
 		return nil, err
 	}
 
-	log.Printf("store.GetUser client.GetItem data: %+v", data)
+	log.Printf("store.GetUser client.GetItem data: %s", json.ToInlineJSON(data))
 	if data.Item == nil {
 		return nil, user.ErrUserNotFound
 	}

@@ -17,3 +17,11 @@ func ToJSONString(i interface{}, m ...MarshalIndent) string {
 	}
 	return string(bytes)
 }
+
+func ToInlineJSON(i interface{}) string {
+	bytes, err := json.Marshal(i)
+	if err != nil {
+		return err.Error()
+	}
+	return string(bytes)
+}

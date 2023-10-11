@@ -10,24 +10,37 @@ import (
 )
 
 var (
-	project   = "pas"
-	service   = "user"
-	rootId    = fmt.Sprintf("%s-%s-thara", project, service)
-	tableName = fmt.Sprintf("%s-user", rootId)
-	fnStackId = fmt.Sprintf("%s-api", rootId)
+	project    = "pas"
+	service    = "user"
+	rootId     = fmt.Sprintf("%s-%s-thara", project, service)
+	tableName  = fmt.Sprintf("%s-user", rootId)
+	apiId      = fmt.Sprintf("%s-api", rootId)
+	resourceId = fmt.Sprintf("%s-resource", rootId)
 )
 
 func main() {
 	defer jsii.Close()
 
 	app := awscdk.NewApp(nil)
-	fnDescription := fmt.Sprintf("%s function stack", rootId)
 
-	stack.NewFunctionStack(app, fnStackId, &stack.FunctionStackProps{
+	// create resource
+	resourceDescription := fmt.Sprintf("%s resource stack", rootId)
+
+	stack.NewResourceStack(app, resourceId, &stack.ResourceStackProps{
 		StackProps: awscdk.StackProps{
-			Description: &fnDescription,
+			Description: jsii.String(resourceDescription),
 		},
-		UserTableName: &tableName,
+		UserTableName: jsii.String(tableName),
+	})
+
+	// create api stack
+	apiDescription := fmt.Sprintf("%s function stack", rootId)
+
+	stack.NewFunctionStack(app, apiId, &stack.FunctionStackProps{
+		StackProps: awscdk.StackProps{
+			Description: jsii.String(apiDescription),
+		},
+		UserTableName: jsii.String(tableName),
 	})
 
 	app.Synth(nil)
