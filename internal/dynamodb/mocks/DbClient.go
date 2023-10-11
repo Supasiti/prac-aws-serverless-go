@@ -23,25 +23,32 @@ func (_m *DbClient) EXPECT() *DbClient_Expecter {
 	return &DbClient_Expecter{mock: &_m.Mock}
 }
 
-// GetItem provides a mock function with given fields: ctx, params
-func (_m *DbClient) GetItem(ctx context.Context, params *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error) {
-	ret := _m.Called(ctx, params)
+// GetItem provides a mock function with given fields: ctx, params, optFns
+func (_m *DbClient) GetItem(ctx context.Context, params *dynamodb.GetItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.GetItemOutput, error) {
+	_va := make([]interface{}, len(optFns))
+	for _i := range optFns {
+		_va[_i] = optFns[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, params)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
 
 	var r0 *dynamodb.GetItemOutput
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error)); ok {
-		return rf(ctx, params)
+	if rf, ok := ret.Get(0).(func(context.Context, *dynamodb.GetItemInput, ...func(*dynamodb.Options)) (*dynamodb.GetItemOutput, error)); ok {
+		return rf(ctx, params, optFns...)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dynamodb.GetItemInput) *dynamodb.GetItemOutput); ok {
-		r0 = rf(ctx, params)
+	if rf, ok := ret.Get(0).(func(context.Context, *dynamodb.GetItemInput, ...func(*dynamodb.Options)) *dynamodb.GetItemOutput); ok {
+		r0 = rf(ctx, params, optFns...)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*dynamodb.GetItemOutput)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *dynamodb.GetItemInput) error); ok {
-		r1 = rf(ctx, params)
+	if rf, ok := ret.Get(1).(func(context.Context, *dynamodb.GetItemInput, ...func(*dynamodb.Options)) error); ok {
+		r1 = rf(ctx, params, optFns...)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -57,13 +64,21 @@ type DbClient_GetItem_Call struct {
 // GetItem is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *dynamodb.GetItemInput
-func (_e *DbClient_Expecter) GetItem(ctx interface{}, params interface{}) *DbClient_GetItem_Call {
-	return &DbClient_GetItem_Call{Call: _e.mock.On("GetItem", ctx, params)}
+//   - optFns ...func(*dynamodb.Options)
+func (_e *DbClient_Expecter) GetItem(ctx interface{}, params interface{}, optFns ...interface{}) *DbClient_GetItem_Call {
+	return &DbClient_GetItem_Call{Call: _e.mock.On("GetItem",
+		append([]interface{}{ctx, params}, optFns...)...)}
 }
 
-func (_c *DbClient_GetItem_Call) Run(run func(ctx context.Context, params *dynamodb.GetItemInput)) *DbClient_GetItem_Call {
+func (_c *DbClient_GetItem_Call) Run(run func(ctx context.Context, params *dynamodb.GetItemInput, optFns ...func(*dynamodb.Options))) *DbClient_GetItem_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(*dynamodb.GetItemInput))
+		variadicArgs := make([]func(*dynamodb.Options), len(args)-2)
+		for i, a := range args[2:] {
+			if a != nil {
+				variadicArgs[i] = a.(func(*dynamodb.Options))
+			}
+		}
+		run(args[0].(context.Context), args[1].(*dynamodb.GetItemInput), variadicArgs...)
 	})
 	return _c
 }
@@ -73,7 +88,7 @@ func (_c *DbClient_GetItem_Call) Return(_a0 *dynamodb.GetItemOutput, _a1 error) 
 	return _c
 }
 
-func (_c *DbClient_GetItem_Call) RunAndReturn(run func(context.Context, *dynamodb.GetItemInput) (*dynamodb.GetItemOutput, error)) *DbClient_GetItem_Call {
+func (_c *DbClient_GetItem_Call) RunAndReturn(run func(context.Context, *dynamodb.GetItemInput, ...func(*dynamodb.Options)) (*dynamodb.GetItemOutput, error)) *DbClient_GetItem_Call {
 	_c.Call.Return(run)
 	return _c
 }

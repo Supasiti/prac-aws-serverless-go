@@ -13,6 +13,8 @@ import (
 	"github.com/supasiti/prac-aws-serverless-go/internal/store/user"
 )
 
+//go:generate go run github.com/vektra/mockery/v2@v2.20.0 --with-expecter=true --name Store
+
 type Store interface {
 	user.Store
 }
@@ -45,7 +47,7 @@ func (s *store) GetUser(ctx context.Context, userID int) (*user.User, error) {
 
 	data, err := s.client.GetItem(ctx, cmd)
 	if err != nil {
-		log.Printf("store.GetUser client.GetItem error: %s", json.ToInlineJSON(err))
+		log.Printf("store.GetUser client.GetItem error: %v", err)
 		return nil, err
 	}
 
