@@ -1,4 +1,4 @@
-package getuser
+package createuser
 
 import (
 	"context"
@@ -10,17 +10,16 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/supasiti/prac-aws-serverless-go/internal/store"
 	"github.com/supasiti/prac-aws-serverless-go/internal/store/mocks"
-	"github.com/supasiti/prac-aws-serverless-go/internal/store/user"
 	"github.com/supasiti/prac-aws-serverless-go/internal/store/user/stub"
 	"github.com/supasiti/prac-aws-serverless-go/pkg/api"
 )
 
-func Test_getUserHandler_GetUser(t *testing.T) {
+func Test_handler_CreateUser(t *testing.T) {
 	type fields struct {
-		store func(t *testing.T) store.Store
+		store func(*testing.T) store.Store
 	}
 	type args struct {
-		pathParams map[string]string
+		body string
 	}
 	tests := []struct {
 		name   string
@@ -33,20 +32,16 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 			fields: fields{
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
-					m.EXPECT().GetUser(mock.Anything, 1).
+					m.EXPECT().CreateUser(mock.Anything, mock.Anything).
 						Return(stub.User(), nil).Times(1)
 					return m
 				},
 			},
-			args: args{
-				pathParams: map[string]string{
-					"userID": "1",
-				},
-			},
+			args: args{body: stub.CreateUserParams().String()},
 			want: api.NewSuccessResponse(stub.User()),
 		},
 		{
-			name: "should handle missing userID",
+			name: "should handle missing firstname",
 			fields: fields{
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
@@ -54,12 +49,12 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 				},
 			},
 			args: args{
-				pathParams: map[string]string{},
+				body: `{"balance": 3214.0, "email":"bob@email.com" }`,
 			},
-			want: api.NewValidationError(ErrMissingUserID),
+			want: api.NewValidationError(ErrMissingFirstName),
 		},
 		{
-			name: "should handle incorrect userID type",
+			name: "should handle missing email",
 			fields: fields{
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
@@ -67,44 +62,34 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 				},
 			},
 			args: args{
-				pathParams: map[string]string{
-					"userID": "invalid id",
-				},
+				body: `{"balance": 3214.0, "firstName":"bob" }`,
 			},
-			want: api.NewValidationError(ErrIncorrectType),
+			want: api.NewValidationError(ErrMissingEmail),
 		},
 		{
-			name: "should handle user not found error",
+			name: "should handle incorrect json string",
 			fields: fields{
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
-					m.EXPECT().GetUser(mock.Anything, 1).
-						Return(nil, user.ErrUserNotFound).Times(1)
 					return m
 				},
 			},
 			args: args{
-				pathParams: map[string]string{
-					"userID": "1",
-				},
+				body: `{"balance": "3214.0", "firstName":"bob", "email": "bob@email.com" }`,
 			},
-			want: api.NewDataNotFoundError(user.ErrUserNotFound),
+			want: api.NewValidationError(ErrBadRequestBody),
 		},
 		{
-			name: "should handle user other error",
+			name: "should handle general error",
 			fields: fields{
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
-					m.EXPECT().GetUser(mock.Anything, 1).
+					m.EXPECT().CreateUser(mock.Anything, mock.Anything).
 						Return(nil, errors.New("some error")).Times(1)
 					return m
 				},
 			},
-			args: args{
-				pathParams: map[string]string{
-					"userID": "1",
-				},
-			},
+			args: args{body: stub.CreateUserParams().String()},
 			want: api.NewGeneralError(),
 		},
 	}
@@ -114,12 +99,12 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 				store: tt.fields.store(t),
 			}
 			req := events.APIGatewayProxyRequest{
-				PathParameters: tt.args.pathParams,
+				Body: tt.args.body,
 			}
 
-			got := h.GetUser(context.Background(), req)
+			got := h.CreateUser(context.Background(), req)
 
-			assert.Equalf(t, tt.want, got, "getUserHandler.GetUser() = %v, want %v", got, tt.want)
+			assert.Equalf(t, tt.want, got, "handler.CreateUser() = %+v, want %+v", got, tt.want)
 
 		})
 	}

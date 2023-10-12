@@ -41,6 +41,10 @@ type CreateUserParams struct {
 	Email     string  `json:"email"`
 }
 
+func (u CreateUserParams) String() string {
+	return json.ToJSONString(u)
+}
+
 type UserItem struct {
 	User
 	table.CommonItem
