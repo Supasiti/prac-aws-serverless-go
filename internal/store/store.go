@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -20,14 +21,16 @@ type Store interface {
 }
 
 type store struct {
-	client    dbclient.DbClient
-	tableName string
+	client      dbclient.DbClient
+	tableName   string
+	idGenerator user.IdGenerator
 }
 
 func NewStore(client dbclient.DbClient, tableName string) (Store, error) {
 	store := &store{
-		client:    client,
-		tableName: tableName,
+		client:      client,
+		tableName:   tableName,
+		idGenerator: idGenerator,
 	}
 
 	return store, nil
@@ -64,4 +67,33 @@ func (s *store) GetUser(ctx context.Context, userID int) (*user.User, error) {
 	}
 
 	return &res, nil
+}
+
+// CreateUser accepts User struct, save to dynamodb and return a user with new id
+func (s *store) CreateUser(ctx context.Context, params *user.CreateUserParams) (*user.User, error) {
+	result := user.CreateUser(params, s.idGenerator)
+	userItem := result.ToUserItem()
+
+	av, err := attributevalue.MarshalMap(userItem)
+	if err != nil {
+		log.Printf("store.CreateUser error: %+v", err)
+		return nil, err
+	}
+
+	cmd := &dynamodb.PutItemInput{
+		Item:      av,
+		TableName: aws.String(s.tableName),
+	}
+
+	_, err = s.client.PutItem(ctx, cmd)
+	if err != nil {
+		log.Printf("store.CreateUser client.PutItem error: %+v", err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func idGenerator() int {
+	return int(time.Now().UnixMilli())
 }

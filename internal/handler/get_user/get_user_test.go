@@ -34,7 +34,7 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 				store: func(t *testing.T) store.Store {
 					m := mocks.NewStore(t)
 					m.EXPECT().GetUser(mock.Anything, 1).
-						Return(stub.GetUser(), nil).Times(1)
+						Return(stub.User(), nil).Times(1)
 					return m
 				},
 			},
@@ -43,7 +43,7 @@ func Test_getUserHandler_GetUser(t *testing.T) {
 					"userID": "1",
 				},
 			},
-			want: api.NewSuccessResponse(stub.GetUser()),
+			want: api.NewSuccessResponse(stub.User()),
 		},
 		{
 			name: "should handle missing userID",

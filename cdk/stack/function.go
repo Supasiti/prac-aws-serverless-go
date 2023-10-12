@@ -2,6 +2,7 @@ package stack
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	awsgw "github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
@@ -99,12 +100,51 @@ func newGetUserApi(scope constructs.Construct, props *GetUserApiProps) {
 	(*props.BasePath).
 		AddResource(jsii.String("{userID}"), nil).
 		AddMethod(
-			jsii.String("GET"),
+			jsii.String(http.MethodGet),
 			apiInt,
 			&awsgw.MethodOptions{
 				RequestParameters: &map[string]*bool{
 					"method.request.path.userID": jsii.Bool(true),
 				},
 			})
-
 }
+
+type CreateUserApiProps struct {
+	BasePath        *awsgw.Resource
+	ApiId           *string
+	UserTableName   *string
+	UserTablePolicy *awsiam.Policy
+}
+
+/* func newCreateUserApi(scope constructs.Construct, props *CreateUserApiProps) {
+	fnName := "createUser"
+	fnId := fmt.Sprintf("%s-%s", *props.ApiId, fnName)
+
+	fmt.Printf("Creating ... Lambda function: %s\n", fnId)
+
+	lambda := awslambda.NewGoFunction(scope, jsii.String(fnId), &awslambda.GoFunctionProps{
+		Entry:        jsii.String("cmd/handler/create_user"),
+		FunctionName: jsii.String(fnId),
+
+		// passing build flag to reduce bundle size
+		Bundling: &awslambda.BundlingOptions{
+			GoBuildFlags: jsii.Strings(`-ldflags "-s -w"`),
+		},
+		Environment: &map[string]*string{
+			"USER_TABLE_NAME": props.UserTableName,
+		},
+	})
+
+	// attach dynamodb policy
+	lambda.Role().AttachInlinePolicy(*props.UserTablePolicy)
+
+	// add lambda integration
+	apiInt := awsgw.NewLambdaIntegration(lambda, &awsgw.LambdaIntegrationOptions{
+		RequestTemplates: &map[string]*string{
+			"application/json": jsii.String("{ \"statusCode\": \"200\" }"),
+		},
+	})
+
+	// add method
+	(*props.BasePath).AddMethod(jsii.String(http.MethodPost), apiInt, &awsgw.MethodOptions{})
+} */

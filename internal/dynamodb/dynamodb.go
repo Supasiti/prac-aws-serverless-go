@@ -16,18 +16,10 @@ var (
 
 type DbClient interface {
 	GetItem(ctx context.Context, params *dynamodb.GetItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.GetItemOutput, error)
+	PutItem(ctx context.Context, params *dynamodb.PutItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.PutItemOutput, error)
 }
 
 func NewDbClient(optFns ...func(*dynamodb.Options)) (*dynamodb.Client, error) {
-	// config := aws.Config{
-	// 	RetryMaxAttempts: 3,
-	// 	RetryMode:        aws.RetryModeStandard,
-	// }
-	//
-	// for _, option := range options {
-	// 	option(&config)
-	// }
-
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRetryMaxAttempts(3),
 		config.WithRetryMode(aws.RetryModeStandard),
