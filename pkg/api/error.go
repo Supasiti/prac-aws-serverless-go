@@ -12,7 +12,7 @@ var (
 )
 
 type ErrorBody struct {
-	Message string
+	Message string `json:"message"`
 }
 
 func NewErrorResponse(err error) *apiResponseBuilder {

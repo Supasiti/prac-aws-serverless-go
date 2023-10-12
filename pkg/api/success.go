@@ -3,7 +3,7 @@ package api
 import "github.com/aws/aws-lambda-go/events"
 
 type SuccessBody struct {
-	Data interface{}
+	Data interface{} `json:"data"`
 }
 
 func NewSuccessResponse(data interface{}) *events.APIGatewayProxyResponse {

@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	ErrMissingFirstName = errors.New("missing firstname")
+	ErrMissingFirstName = errors.New("missing firstName")
 	ErrMissingEmail     = errors.New("missing email")
 	ErrBadRequestBody   = errors.New("incorrect request body")
 )

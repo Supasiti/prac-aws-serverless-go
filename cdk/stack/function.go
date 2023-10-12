@@ -48,6 +48,13 @@ func NewFunctionStack(scope constructs.Construct, id string, props *FunctionStac
 		UserTablePolicy: userTablePolicy,
 	})
 
+	newCreateUserApi(stack, &CreateUserApiProps{
+		BasePath:        basePath,
+		ApiId:           &id,
+		UserTableName:   props.UserTableName,
+		UserTablePolicy: userTablePolicy,
+	})
+
 	return &stack
 }
 
@@ -116,7 +123,7 @@ type CreateUserApiProps struct {
 	UserTablePolicy *awsiam.Policy
 }
 
-/* func newCreateUserApi(scope constructs.Construct, props *CreateUserApiProps) {
+func newCreateUserApi(scope constructs.Construct, props *CreateUserApiProps) {
 	fnName := "createUser"
 	fnId := fmt.Sprintf("%s-%s", *props.ApiId, fnName)
 
@@ -147,4 +154,4 @@ type CreateUserApiProps struct {
 
 	// add method
 	(*props.BasePath).AddMethod(jsii.String(http.MethodPost), apiInt, &awsgw.MethodOptions{})
-} */
+}
