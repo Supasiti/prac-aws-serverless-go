@@ -22,7 +22,11 @@ clean:
 test: 
 	go test -short -race -gcflags=all=-l ./...
 
+.PHONY: test-one
+test-one:
+	go test -short -race -gcflags=all=-l $(path) -v -run $(fn) 
+	
 .PHONY: generate
-generate: build
+generate:
 	go generate ./...
 
