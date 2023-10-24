@@ -31,9 +31,18 @@ generate:
 	go generate ./...
 
 .PHONY: lint
-lint:
-	golangci-lint run
+lint: deps
+	bin/golangci-lint run
 
 .PHONY: fmt
-fmt: 
-	golangci-lint run --fix
+fmt: deps 
+	bin/golangci-lint run --fix
+
+deps: bin/golangci-lint
+deps: # install dependencies
+
+GOLANGCI_VERSION = 1.53.3
+
+bin/golangci-lint:
+	@mkdir -p bin
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | bash -s -- v${GOLANGCI_VERSION}
