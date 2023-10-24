@@ -10,7 +10,7 @@ func NewSuccessResponse(data interface{}) *events.APIGatewayProxyResponse {
 	body := &SuccessBody{
 		Data: data,
 	}
-	res := NewApiResponseBuilder(body).Build()
+	res := NewBuilder(body).Build()
 
 	return res
 }

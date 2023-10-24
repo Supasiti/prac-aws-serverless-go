@@ -6,7 +6,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-
 	"github.com/supasiti/prac-aws-serverless-go/internal/pkg/json"
 	"github.com/supasiti/prac-aws-serverless-go/internal/store/table"
 )
@@ -45,7 +44,7 @@ func (u CreateUserParams) String() string {
 	return json.ToJSONString(u)
 }
 
-type UserItem struct {
+type Item struct {
 	User
 	table.CommonItem
 }

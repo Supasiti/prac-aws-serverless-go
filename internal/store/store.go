@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-
 	dbclient "github.com/supasiti/prac-aws-serverless-go/internal/dynamodb"
 	"github.com/supasiti/prac-aws-serverless-go/internal/pkg/json"
 	"github.com/supasiti/prac-aws-serverless-go/internal/store/user"
@@ -23,7 +22,7 @@ type Store interface {
 type store struct {
 	client      dbclient.DbClient
 	tableName   string
-	idGenerator user.IdGenerator
+	idGenerator user.IDGenerator
 }
 
 func NewStore(client dbclient.DbClient, tableName string) (Store, error) {

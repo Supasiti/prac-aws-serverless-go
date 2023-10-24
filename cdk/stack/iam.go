@@ -54,14 +54,14 @@ func NewServiceIamPolicy(props *ServiceIamPolicyProps) *awsiam.Policy {
 }
 
 func newResources(props *ServiceIamPolicyProps) []*string {
-	accountId := props.Stack.Account()
+	accountID := props.Stack.Account()
 	region := props.Stack.Region()
 
 	result := []*string{}
 	for _, resourceName := range props.ResourceNames {
 		// ARN looks like
 		// arn:aws:<service>:<region>:<accountId>:<resourceType><name>
-		arn := fmt.Sprintf("arn:aws:%s:%s:%s:%s%s", props.Service, *region, *accountId, props.ResourceType, resourceName)
+		arn := fmt.Sprintf("arn:aws:%s:%s:%s:%s%s", props.Service, *region, *accountID, props.ResourceType, resourceName)
 
 		result = append(result, jsii.String(arn))
 	}

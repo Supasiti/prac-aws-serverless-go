@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
-
 	"github.com/supasiti/prac-aws-serverless-go/pkg/http/header"
 )
 
@@ -16,15 +15,15 @@ var (
 	}
 )
 
-type ApiResponseBuilder interface {
+type ResponseBuilder interface {
 	Build() *events.APIGatewayProxyResponse
 }
 
-type apiResponseBuilder struct {
+type Builder struct {
 	resp events.APIGatewayProxyResponse
 }
 
-func NewApiResponseBuilder(body interface{}) *apiResponseBuilder {
+func NewBuilder(body interface{}) *Builder {
 
 	resp := events.APIGatewayProxyResponse{
 		Headers:    defaultHeader,
@@ -33,21 +32,21 @@ func NewApiResponseBuilder(body interface{}) *apiResponseBuilder {
 	stringBody, _ := json.Marshal(body)
 	resp.Body = string(stringBody)
 
-	return &apiResponseBuilder{resp: resp}
+	return &Builder{resp: resp}
 }
 
-func (r *apiResponseBuilder) WithStatus(status int) *apiResponseBuilder {
+func (r *Builder) WithStatus(status int) *Builder {
 	r.resp.StatusCode = status
 	return r
 }
 
-func (r *apiResponseBuilder) WithHeaders(headers map[string]string) *apiResponseBuilder {
+func (r *Builder) WithHeaders(headers map[string]string) *Builder {
 	for k, v := range headers {
 		r.resp.Headers[k] = v
 	}
 	return r
 }
 
-func (r *apiResponseBuilder) Build() *events.APIGatewayProxyResponse {
+func (r *Builder) Build() *events.APIGatewayProxyResponse {
 	return &r.resp
 }

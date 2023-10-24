@@ -31,8 +31,8 @@ func NewResourceStack(scope constructs.Construct, id string, props *ResourceStac
 }
 
 func newUserTable(scope constructs.Construct, id string, props *ResourceStackProps) *awsdynamodb.TableV2 {
-	tableId := fmt.Sprintf("%s-user", id)
-	table := awsdynamodb.NewTableV2(scope, jsii.String(tableId), &awsdynamodb.TablePropsV2{
+	tableID := fmt.Sprintf("%s-user", id)
+	table := awsdynamodb.NewTableV2(scope, jsii.String(tableID), &awsdynamodb.TablePropsV2{
 		TableName:     props.UserTableName,
 		Billing:       awsdynamodb.Billing_OnDemand(),
 		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,

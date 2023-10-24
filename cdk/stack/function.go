@@ -28,6 +28,7 @@ func NewFunctionStack(scope constructs.Construct, id string, props *FunctionStac
 
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
+	// create api gateway
 	basePath := newBaseResource(stack, &id)
 
 	// create dynamodb policy
@@ -41,16 +42,18 @@ func NewFunctionStack(scope constructs.Construct, id string, props *FunctionStac
 		Stack:         stack,
 	})
 
-	newGetUserApi(stack, &GetUserApiProps{
+	// create get user lambda
+	newGetUserAPI(stack, &GetUserAPIProps{
 		BasePath:        basePath,
-		ApiId:           &id,
+		APIID:           &id,
 		UserTableName:   props.UserTableName,
 		UserTablePolicy: userTablePolicy,
 	})
 
-	newCreateUserApi(stack, &CreateUserApiProps{
+	// create create user lambda
+	newCreateUserAPI(stack, &CreateUserAPIProps{
 		BasePath:        basePath,
-		ApiId:           &id,
+		APIID:           &id,
 		UserTableName:   props.UserTableName,
 		UserTablePolicy: userTablePolicy,
 	})
@@ -59,30 +62,30 @@ func NewFunctionStack(scope constructs.Construct, id string, props *FunctionStac
 }
 
 func newBaseResource(scope constructs.Construct, id *string) *awsgw.Resource {
-	restApi := awsgw.NewRestApi(scope, id, &awsgw.RestApiProps{
+	restAPI := awsgw.NewRestApi(scope, id, &awsgw.RestApiProps{
 		RestApiName: jsii.String("User Service"),
 	})
 
-	resource := restApi.Root().AddResource(jsii.String("users"), nil)
+	resource := restAPI.Root().AddResource(jsii.String("users"), nil)
 	return &resource
 }
 
-type GetUserApiProps struct {
+type GetUserAPIProps struct {
 	BasePath        *awsgw.Resource
-	ApiId           *string
+	APIID           *string
 	UserTableName   *string
 	UserTablePolicy *awsiam.Policy
 }
 
-func newGetUserApi(scope constructs.Construct, props *GetUserApiProps) {
+func newGetUserAPI(scope constructs.Construct, props *GetUserAPIProps) {
 	fnName := "getUser"
-	fnId := fmt.Sprintf("%s-%s", *props.ApiId, fnName)
+	fnID := fmt.Sprintf("%s-%s", *props.APIID, fnName)
 
-	fmt.Printf("Creating ... Lambda function: %s\n", fnId)
+	fmt.Printf("Creating ... Lambda function: %s\n", fnID)
 
-	lambda := awslambda.NewGoFunction(scope, jsii.String(fnId), &awslambda.GoFunctionProps{
+	lambda := awslambda.NewGoFunction(scope, jsii.String(fnID), &awslambda.GoFunctionProps{
 		Entry:        jsii.String("cmd/handler/get_user"),
-		FunctionName: jsii.String(fnId),
+		FunctionName: jsii.String(fnID),
 
 		// passing build flag to reduce bundle size
 		Bundling: &awslambda.BundlingOptions{
@@ -116,22 +119,22 @@ func newGetUserApi(scope constructs.Construct, props *GetUserApiProps) {
 			})
 }
 
-type CreateUserApiProps struct {
+type CreateUserAPIProps struct {
 	BasePath        *awsgw.Resource
-	ApiId           *string
+	APIID           *string
 	UserTableName   *string
 	UserTablePolicy *awsiam.Policy
 }
 
-func newCreateUserApi(scope constructs.Construct, props *CreateUserApiProps) {
+func newCreateUserAPI(scope constructs.Construct, props *CreateUserAPIProps) {
 	fnName := "createUser"
-	fnId := fmt.Sprintf("%s-%s", *props.ApiId, fnName)
+	fnID := fmt.Sprintf("%s-%s", *props.APIID, fnName)
 
-	fmt.Printf("Creating ... Lambda function: %s\n", fnId)
+	fmt.Printf("Creating ... Lambda function: %s\n", fnID)
 
-	lambda := awslambda.NewGoFunction(scope, jsii.String(fnId), &awslambda.GoFunctionProps{
+	lambda := awslambda.NewGoFunction(scope, jsii.String(fnID), &awslambda.GoFunctionProps{
 		Entry:        jsii.String("cmd/handler/create_user"),
-		FunctionName: jsii.String(fnId),
+		FunctionName: jsii.String(fnID),
 
 		// passing build flag to reduce bundle size
 		Bundling: &awslambda.BundlingOptions{

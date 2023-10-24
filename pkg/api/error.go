@@ -15,12 +15,12 @@ type ErrorBody struct {
 	Message string `json:"message"`
 }
 
-func NewErrorResponse(err error) *apiResponseBuilder {
+func NewErrorResponse(err error) *Builder {
 	errorBody := &ErrorBody{
 		Message: err.Error(),
 	}
 
-	builder := NewApiResponseBuilder(errorBody).WithStatus(http.StatusInternalServerError)
+	builder := NewBuilder(errorBody).WithStatus(http.StatusInternalServerError)
 	return builder
 }
 

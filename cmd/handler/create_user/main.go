@@ -7,7 +7,6 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-
 	"github.com/supasiti/prac-aws-serverless-go/internal/dynamodb"
 	createuser "github.com/supasiti/prac-aws-serverless-go/internal/handler/create_user"
 	"github.com/supasiti/prac-aws-serverless-go/internal/pkg/json"
@@ -35,8 +34,8 @@ func main() {
 		return
 	}
 
-	handler := createHandler(store)
-	lambda.Start(handler)
+	h := createHandler(store)
+	lambda.Start(h)
 }
 
 func createHandler(store store.Store) handler {

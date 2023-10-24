@@ -6,9 +6,9 @@ import (
 	"github.com/supasiti/prac-aws-serverless-go/internal/store/table"
 )
 
-type IdGenerator = func() int
+type IDGenerator = func() int
 
-func CreateUser(params *CreateUserParams, idFn IdGenerator) *User {
+func CreateUser(params *CreateUserParams, idFn IDGenerator) *User {
 	userID := idFn()
 
 	return &User{
@@ -19,10 +19,10 @@ func CreateUser(params *CreateUserParams, idFn IdGenerator) *User {
 	}
 }
 
-func (u User) ToUserItem() UserItem {
+func (u User) ToUserItem() Item {
 	lastUpdated := time.Now()
 
-	return UserItem{
+	return Item{
 		User: u,
 		CommonItem: table.CommonItem{
 			PK:          table.UserToPK(u.UserID),

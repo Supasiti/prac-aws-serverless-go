@@ -30,3 +30,10 @@ test-one:
 generate:
 	go generate ./...
 
+.PHONY: lint
+lint:
+	golangci-lint run
+
+.PHONY: fmt
+fmt: 
+	golangci-lint run --fix
